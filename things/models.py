@@ -23,7 +23,7 @@ class Thing(models.Model):
     class Meta:
         verbose_name = "Thing"
 
-class Data(models.Model):
+class ThingData(models.Model):
     things = models.ForeignKey(Thing, on_delete=models.CASCADE)
     value = models.CharField(max_length=20, blank=True)
     created_date = models.DateTimeField(auto_now_add=True)
@@ -33,4 +33,4 @@ class Data(models.Model):
         return self.things.name
 
     class Meta:
-        verbose_name = "Data"
+        verbose_name = "Thing Data"

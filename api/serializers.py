@@ -18,3 +18,14 @@ class ThingDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = ThingData
         fields = '__all__'
+
+from company.models import Company, Department
+class CompanySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Company
+        fields = '__all__'
+
+class DepartmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Department
+        fields = '__all__'

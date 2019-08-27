@@ -9,7 +9,11 @@ from .serializers import (
     EntrySerializer, 
     ThingSerializer,
     ThingDataSerializer,
+    CompanySerializer,
+    DepartmentSerializer,
 )
+
+from company.models import Company, Department
 
 from entry.models import Entry
 class EntryViewSet(viewsets.ModelViewSet):
@@ -41,3 +45,17 @@ class ThingDataViewSet(viewsets.ModelViewSet):
         schedule = ThingData.objects.filter(things_id=pk).distinct()[:1]
         schedule_json = ThingDataSerializer(schedule, many=True)
         return Response(schedule_json.data)
+
+class CompanyViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    queryset = Company.objects.all().order_by('-created_date')
+    serializer_class = CompanySerializer
+
+class DeparmentViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    queryset = Department.objects.all().order_by('-created_date')
+    serializer_class = DepartmentSerializer

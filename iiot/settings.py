@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'device',
     'things',
     'entry',
+    'company',
+    'customer',
     'api',
 ]
 

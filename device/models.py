@@ -3,7 +3,7 @@ from django.db import models
 from gateway.models import Gateway
 # Create your models here.
 class Device(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, unique=True)
     dev_address = models.SmallIntegerField()
     description = models.TextField(blank=True)
     gateway_id = models.ForeignKey(Gateway, on_delete=models.CASCADE)

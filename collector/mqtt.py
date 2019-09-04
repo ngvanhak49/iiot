@@ -2,6 +2,11 @@ import paho.mqtt.client as mqtt
 import threading, time
 import os
 import json
+import logging
+
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 class MQTTCONFIG():
   TOPIC_V100_IN = "et/01/+/in"
@@ -10,6 +15,9 @@ class MQTTCONFIG():
   BROKER_PORT = 1883
   BROKER_USER = 'MQmodem'
   BROKER_PASS = 'ethingsMQ100'
+  SSL_FILE = ''
+
+  ssl_enable = 0
 
 def rule_process(rule, thing, thingdata):
   try:
@@ -33,9 +41,10 @@ def rule_process(rule, thing, thingdata):
       report = RuleEngineReport.objects.create(name=thing.things_alt, value=thingdata.conv_value, 
                     ruleengine_id=rule.id, thing_id=thing.id)
       report.save()
-      print("rule_process: " + report.name + " done!")
+      #print("rule_process: " + report.name + " done!")
   except Exception as ex:
-    print("rule_process: " + str(ex))
+    #print("rule_process: " + str(ex))
+    logger.error("rule_process: " + str(ex))
   
 
 def convert_data_type(thing, thingdata):
@@ -78,10 +87,11 @@ def convert_data_type(thing, thingdata):
           thingdata.conv_value = ((thingdata.value) * thing.things_gain) + thing.things_offset
       
     except Exception as ex:
-      print("convert_data_type:" + str(ex))
+      #print("convert_data_type:" + str(ex))
+      logger.error("convert_data_type: " + str(ex))
 
 def on_publish(client,userdata,result):
-    print("Device 1 : Data published.")
+    #print("Device 1 : Data published.")
     pass
 
 def on_connect(client, userdata, flags, rc):
@@ -103,13 +113,13 @@ def on_message(client, userdata, msg):
     from ruleengine.models import RuleEngine
 
     payload = msg.payload.decode()
-    print(payload)
+    #print(payload)
     try:
       provider, msg_version, gateway_name, direct = msg.topic.split('/')
     
       if provider == 'et' and msg_version == '01' and direct == 'in':
         jdata = json.loads(payload)
-        print(jdata)
+        #print(jdata)
         try:
           if jdata['messageType'] == 'Periodic':
             #gw = Gateway.objects.all().filter(name=gateway_name)
@@ -119,7 +129,7 @@ def on_message(client, userdata, msg):
             except:
               pass
 
-            print(devs)
+            #print(devs)
             for jp in jpayload_arr:
               dev = devs.get(dev_address=jp['slave'])
               #things = Thing.objects.all().filter(device_id=dev)
@@ -130,7 +140,7 @@ def on_message(client, userdata, msg):
                   thing = Thing.objects.get(device_id=dev,
                       things_fcode=point['functionCode'],
                       things_address=point['address'])
-                  print(thing)
+                  #print(thing)
                   if thing is not None:
                     # save data to Database. Version 1.0.0, I dont care system perfromance.
                     thingdata = ThingData.objects.create(things_id=thing.id, name=thing.things_alt)
@@ -139,16 +149,18 @@ def on_message(client, userdata, msg):
                     thingdata.save()
                     # load all rule engine for thing, process them and save to rule report.
                     rules = RuleEngine.objects.all().filter(thing_id=thing.id)
-                    print('*****************', rules)
+                    #print('*****************', rules)
                     for rule in rules:
                       rule_process(rule, thing, thingdata)
                 except:
                   pass
             
         except Exception as ex:
-          print("filter: " + str(ex))
+          #print("filter: " + str(ex), payload)
+          logger.error("mqtt payload: " + payload + str(ex))
     except Exception as ex:
-      print(str(ex) + msg.topic)
+      #print(str(ex) + msg.topic)
+      logger.error("mqtt topic: " + msg.topic + str(ex))
 
 client =mqtt.Client("et-01-pid-" + str(os.getpid()))
 client.on_connect = on_connect
@@ -158,20 +170,19 @@ client.on_publish = on_publish
 #client.on_disconnect = on_disconnect
 cuser = MQTTCONFIG.BROKER_USER
 cpass = MQTTCONFIG.BROKER_PASS
-ssl_enable = 0
-if ssl_enable == 0:
+
+if MQTTCONFIG.ssl_enable == 0:
     client.username_pw_set(cuser, cpass)
-elif ssl_enable == 1:
+elif MQTTCONFIG.ssl_enable == 1:
     import ssl
-    CertLocate = ""
     ssl.match_hostname = lambda cert, hostname: True
     client.username_pw_set(cuser, cpass)
-    client.tls_set(CertLocate, tls_version=ssl.PROTOCOL_TLSv1_2)
+    client.tls_set(MQTTCONFIG.SSL_FILE, tls_version=ssl.PROTOCOL_TLSv1_2)
     client.tls_insecure_set(False)
 
 import sys
 def mqtt_init():
-  print("mqtt client start")
+  #print("mqtt client start")
   try:
     client.connect(MQTTCONFIG.BROKER_URL, port=MQTTCONFIG.BROKER_PORT)
     client.loop_forever(.01)
@@ -181,12 +192,13 @@ def mqtt_init():
     
     sys.exit()
   except Exception as ex:
-    print(str(ex))
+    #print(str(ex))
+    logger.error("mqtt_init: " + str(ex))
 
 def datasource_mqtt_init():
   mqtt_thread = threading.Thread(target=mqtt_init, name="mqtt_thread")
   mqtt_thread.start()
-  print("created thread for mqtt client" + str(os.getpid()))
+  #print("created thread for mqtt client" + str(os.getpid()))
 
 #test
 # mqtt_init()

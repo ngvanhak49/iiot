@@ -25,7 +25,7 @@ SECRET_KEY = 'se8-qm3mp2ggm=j%33#xll#rlkl*eu$z^%u(lk(tv84d!)^^37'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['*']
 CORS_ORIGIN_ALLOW_ALL = True
 
 
@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'ruleengine',
     'rulereport',
     'datasource',
+    'collector.apps.CollectorConfig',
     'api',
 ]
 
@@ -113,6 +114,36 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'WARNING',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'common.log'),
+            'backupCount': 10, # keep at most 10 log files
+            'maxBytes': 5242880, # 5*1024*1024 bytes (5MB)
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    },
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/

@@ -2,7 +2,7 @@ from django.db import models
 
 # Create your models here.
 class Gateway(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, unique=True)
     ip_address = models.CharField(max_length=20, blank=True)
     ip_mac = models.CharField(max_length=20, blank=True)
     ip_default = models.CharField(max_length=20, blank=True)

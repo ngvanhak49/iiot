@@ -131,15 +131,15 @@ def on_message(client, userdata, msg):
 
             #print(devs)
             for jp in jpayload_arr:
-              dev = devs.get(dev_address=jp['slave'])
+              dev = devs.get(dev_address=int(jp['slave']))
               #things = Thing.objects.all().filter(device_id=dev)
               for point in jp['data']:
                 try:
                   #thing = things.get(things_fcode=point['functionCode'],
                   #                      things_address=point['address'])
                   thing = Thing.objects.get(device_id=dev,
-                      things_fcode=point['functionCode'],
-                      things_address=point['address'])
+                      things_fcode=int(point['functionCode']),
+                      things_address=int(point['address']))
                   #print(thing)
                   if thing is not None:
                     # save data to Database. Version 1.0.0, I dont care system perfromance.

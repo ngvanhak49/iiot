@@ -6,4 +6,4 @@ class CollectorConfig(AppConfig):
 
     def ready(self):
         print("collector done")
-        datasource_mqtt_init()
+        #datasource_mqtt_init()

@@ -43,13 +43,13 @@ class Thing(models.Model):
     things_gain = models.FloatField(default=1)
     things_offset = models.FloatField(default=1)
     things_poll = models.SmallIntegerField(default=1000)
-    description = models.TextField(blank=True)
+    description = models.TextField(blank=True, max_length=1000)
     device_id = models.ForeignKey(Device, on_delete=models.CASCADE)
     things_alt = models.CharField(max_length=50, unique=True)
     created_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.name
+        return self.things_alt
 
     class Meta:
         verbose_name = "Thing"

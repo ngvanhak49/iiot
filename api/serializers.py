@@ -5,12 +5,13 @@ from things.models import Thing, ThingData
 from company.models import Company, Department
 from ruleengine.models import RuleEngine
 from rulereport.models import RuleEngineReport
+from customer.models import Customer
+from organization.models import Organization
 
 class EntrySerializer(serializers.ModelSerializer):
     class Meta:
         model = Entry
-        fields = ['id', 'name', 'things', 'created_date', 'description']
-
+        fields = "__all__"
 
 
 class ThingSerializer(serializers.ModelSerializer):
@@ -42,4 +43,14 @@ class RuleEngineSerializer(serializers.ModelSerializer):
 class RuleReportSerializer(serializers.ModelSerializer):
     class Meta:
         model = RuleEngineReport
+        fields = '__all__'
+
+class CustomerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Customer
+        fields = '__all__'
+
+class OrganizationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Organization
         fields = '__all__'

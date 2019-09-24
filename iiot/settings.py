@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'ruleengine',
     'rulereport',
     'datasource',
+    'organization',
     'collector.apps.CollectorConfig',
     'api',
 ]
@@ -90,8 +91,12 @@ WSGI_APPLICATION = 'iiot.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'iiot',
+        'USER': 'ethings',
+        'PASSWORD': 'ethings@2019',
+        'HOST': '45.124.87.131',
+        'PORT':'',
     }
 }
 
@@ -130,7 +135,7 @@ LOGGING = {
     'handlers': {
         'file': {
             'level': 'WARNING',
-            'class': 'logging.FileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': os.path.join(BASE_DIR, 'common.log'),
             'backupCount': 10, # keep at most 10 log files
             'maxBytes': 5242880, # 5*1024*1024 bytes (5MB)

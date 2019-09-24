@@ -1,9 +1,11 @@
 from django.db import models
+from customer.models import Customer
 
 # Create your models here.
 class Company(models.Model):
     name = models.CharField(max_length=125,unique=True, verbose_name="name")
     #parent_company = models.ForeignKey('self', blank=True, null=True, related_name="children")
+    owner = models.ForeignKey(Customer, on_delete=models.CASCADE,  blank=True, null=True)
     parent = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True, related_name="children", verbose_name="parent company")
     description = models.CharField(max_length=250, blank=True, verbose_name=("description"))
     address = models.CharField(max_length=125, blank=True, null=True, verbose_name=("address"))
@@ -30,7 +32,7 @@ class Company(models.Model):
 class Department(models.Model):
     name = models.CharField(max_length=125,verbose_name=("name"))
     #director = models.ForeignKey(Account, verbose_name=_("director"))
-    belong_to = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="departments", verbose_name=("company belongs to"))
+    belong_to = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="Company", verbose_name=("company belongs to"))
     #parent_department = models.ForeignKey('self', blank=True, null=True, related_name="children")
     parent = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True, related_name="children", verbose_name=("parent department"))
     description = models.CharField(max_length=250, blank=True, verbose_name=("description"))

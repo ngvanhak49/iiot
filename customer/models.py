@@ -5,7 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 
 class Customer(models.Model):
     code        = models.CharField(max_length=100, verbose_name=_("customer code"))
-    name        = models.CharField(max_length=100, verbose_name=_("name"))
+    name        = models.CharField(max_length=100, verbose_name=_("name"), unique=True)
     description = models.CharField(max_length=250, blank=True, null=True, verbose_name=_("description"))
     address     = models.CharField(max_length=125, verbose_name=_("address"))
     city        = models.CharField(max_length=50, blank=True, null=True, verbose_name=_("city"))

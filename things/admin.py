@@ -8,7 +8,7 @@ class ThingsAdmin(admin.ModelAdmin):
 
 class ThingsDataAdmin(admin.ModelAdmin):
     search_fields = ('name', 'value')
-    list_filter = ('name', 'created_date', 'value')
+    list_filter = ('name', 'created_date')
     readonly_fields = ('created_date',)
     ordering = ('-created_date',)
     date_hierarchy = 'created_date'
